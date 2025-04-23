@@ -1,6 +1,13 @@
 package params
 
+import (
+	"fmt"
+
+	"github.com/OffchainLabs/prysm/v6/config/features"
+)
+
 func init() {
+	// Register default configurations for known networks.
 	defaults := []*BeaconChainConfig{
 		MainnetConfig(),
 		MinimalSpecConfig(),
@@ -10,18 +17,19 @@ func init() {
 		HoleskyConfig(),
 		SepoliaConfig(),
 		HoodiConfig(),
+		EphemeryConfig(),
 	}
 	configs = newConfigset(defaults...)
-	// ensure that main net is always present and active by default
+	// Ensure that mainnet is always present and active by default.
 	if err := SetActive(MainnetConfig()); err != nil {
-		panic(err)
+		panic(fmt.Sprintf("Failed to set mainnet config as active: %v", err))
 	}
-	// make sure mainnet is present and active
+	// Make sure mainnet is present and active.
 	m, err := ByName(MainnetName)
-	if err != nil {
-		panic(err)
+	if err != nil {.
+		panic(fmt.Sprintf("Failed to get mainnet config by name: %v", err))
 	}
 	if configs.getActive() != m {
-		panic("mainnet should always be the active config at init() time")
+		panic("Mainnet should always be the active config at init() time")
 	}
 }
