@@ -23,6 +23,11 @@ var (
 		Name:  "hoodi",
 		Usage: "Runs Prysm configured for the Hoodi test network.",
 	}
+	// EphemeryTestnet flag for the Ephemery testnet.
+	EphemeryTestnet = &cli.BoolFlag{
+		Name:  "ephemery",
+		Usage: "Runs Prysm configured for the Ephemery test network (requires frequent genesis updates).",
+	}
 	// Mainnet flag for easier tooling, no-op
 	Mainnet = &cli.BoolFlag{
 		Value: true,
@@ -201,6 +206,7 @@ var ValidatorFlags = append(deprecatedFlags, []cli.Flag{
 	HoleskyTestnet,
 	SepoliaTestnet,
 	HoodiTestnet,
+	EphemeryTestnet,
 	Mainnet,
 	dynamicKeyReloadDebounceInterval,
 	attestTimely,
@@ -226,6 +232,7 @@ var BeaconChainFlags = combinedFlags([]cli.Flag{
 	HoleskyTestnet,
 	SepoliaTestnet,
 	HoodiTestnet,
+	EphemeryTestnet,
 	Mainnet,
 	disablePeerScorer,
 	disableBroadcastSlashingFlag,
@@ -271,4 +278,5 @@ var NetworkFlags = []cli.Flag{
 	SepoliaTestnet,
 	HoleskyTestnet,
 	HoodiTestnet,
+	EphemeryTestnet,
 }
