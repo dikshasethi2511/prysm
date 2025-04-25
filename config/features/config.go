@@ -151,6 +151,12 @@ func configureTestnet(ctx *cli.Context) error {
 			return err
 		}
 		params.UseHoodiNetworkConfig()
+	} else if ctx.Bool(EphemeryTestnet.Name) {
+		log.Info("Running on the Ephemery Beacon Chain Testnet (Experimental)")
+		if err := params.SetActive(params.EphemeryConfig().Copy()); err != nil {
+			return err
+		}
+		params.UseEphemeryNetworkConfig()
 	} else {
 		if ctx.IsSet(cmd.ChainConfigFileFlag.Name) {
 			log.Warn("Running on custom Ethereum network specified in a chain configuration yaml file")
