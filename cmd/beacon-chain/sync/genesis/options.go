@@ -4,9 +4,16 @@ import (
 	"github.com/OffchainLabs/prysm/v6/beacon-chain/node"
 	"github.com/OffchainLabs/prysm/v6/beacon-chain/sync/genesis"
 	"github.com/OffchainLabs/prysm/v6/cmd/beacon-chain/sync/checkpoint"
+	"github.com/OffchainLabs/prysm/v6/config/params"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+)
+
+const (
+	// DefaultEphemeryCheckpointURL is the placeholder for the official Ephemery checkpoint sync endpoint.
+	// TODO: Replace this with the actual URL once known.
+	DefaultEphemeryCheckpointURL = "http://replace.with.ephemery.checkpoint.sync.url.example.com"
 )
 
 var (
@@ -30,10 +37,22 @@ var (
 func BeaconNodeOptions(c *cli.Context) ([]node.Option, error) {
 	statePath := c.Path(StatePath.Name)
 	remoteURL := c.String(BeaconAPIURL.Name)
+
+	// Use checkpoint sync url if genesis url is not provided explicitly
 	if remoteURL == "" && c.String(checkpoint.RemoteURL.Name) != "" {
 		log.Infof("using checkpoint sync url %s for value in --%s flag", c.String(checkpoint.RemoteURL.Name), BeaconAPIURL.Name)
 		remoteURL = c.String(checkpoint.RemoteURL.Name)
 	}
+
+	if params.BeaconConfig().ConfigName == params.EphemeryName {
+		if statePath == "" && remoteURL == "" {
+			// Use the default checkpoint sync URL if the user doesn't provide the geneis url explicitly for Ephemery.
+			log.Infof("Ephemery network detected and no --genesis-state or --genesis-beacon-api-url provided. Defaulting to Ephemery checkpoint sync endpoint: %s", DefaultEphemeryCheckpointURL)
+			remoteURL = DefaultEphemeryCheckpointURL
+		}
+	}
+
+	// If a remote URL is set (either by user or Ephemery default), use APIInitializer.
 	if remoteURL != "" {
 		opt := func(node *node.BeaconNode) error {
 			var err error
@@ -46,16 +65,18 @@ func BeaconNodeOptions(c *cli.Context) ([]node.Option, error) {
 		return []node.Option{opt}, nil
 	}
 
-	if statePath == "" {
-		return nil, nil
+	// If only a state path is set, use FileInitializer.
+	if statePath != "" {
+		opt := func(node *node.BeaconNode) (err error) {
+			node.GenesisInitializer, err = genesis.NewFileInitializer(statePath)
+		if err != nil {
+				return errors.Wrap(err, "error preparing to initialize genesis db state from local ssz files")
+			}
+			return nil
+		}
+		return []node.Option{opt}, nil
 	}
 
-	opt := func(node *node.BeaconNode) (err error) {
-		node.GenesisInitializer, err = genesis.NewFileInitializer(statePath)
-		if err != nil {
-			return errors.Wrap(err, "error preparing to initialize genesis db state from local ssz files")
-		}
-		return nil
-	}
-	return []node.Option{opt}, nil
+	// No flags provided, and not Ephemery using its default.
+	return nil, nil
 }

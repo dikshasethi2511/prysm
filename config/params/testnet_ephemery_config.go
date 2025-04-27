@@ -1,7 +1,18 @@
 package params
 
 import (
-	"github.com/sirupsen/logrus"
+)
+
+// Ephemery constants based on EIP-6916
+const (
+	// EphemeryPeriod defines the duration of each Ephemery network iteration (e.g., 7 days).
+	EphemeryPeriod = 7 * 24 * 60 * 60 // 604800 seconds
+	// EphemeryGenesis0Time is the timestamp of the very first Ephemery genesis (iteration i=0).
+	// Example: April 9th, 2023, 00:00:00 UTC
+	EphemeryGenesis0Time = 1680998400
+	// EphemeryGenesis0ChainID is the base chain ID for the first Ephemery iteration (i=0).
+	// Example: 6916
+	EphemeryGenesis0ChainID = 6916
 )
 
 // EphemeryConfig defines the config for the Ephemery beacon chain testnet.
