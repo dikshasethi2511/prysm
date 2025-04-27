@@ -1,6 +1,12 @@
 package params
 
 import (
+	"time"
+
+	beaconnumeric "github.com/OffchainLabs/prysm/v6/consensus-types/primitives"
+	"github.com/OffchainLabs/prysm/v6/runtime/version"
+	"github.com/holiman/uint256"
+	"github.com/sirupsen/logrus"
 )
 
 // Ephemery constants based on EIP-6916
@@ -17,6 +23,8 @@ const (
 
 // EphemeryConfig defines the config for the Ephemery beacon chain testnet.
 // NOTE: This function needs to be kept up-to-date with the official Ephemery specs.
+// It defines the STATIC parameters. Dynamic parameters (genesis time, validator root)
+// will be calculated and overridden during initialization.
 func EphemeryConfig() *BeaconChainConfig {
 	cfg := MainnetConfig().Copy()
 
