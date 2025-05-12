@@ -11,9 +11,8 @@ import (
 )
 
 const (
-	// DefaultEphemeryCheckpointURL is the placeholder for the official Ephemery checkpoint sync endpoint.
-	// TODO: Replace this with the actual URL once known.
-	DefaultEphemeryCheckpointURL = "http://replace.with.ephemery.checkpoint.sync.url.example.com"
+	// DefaultEphemeryCheckpointURL is the official Ephemery checkpoint sync endpoint.
+	DefaultEphemeryCheckpointURL = "https://ephemery.beaconstate.ethstaker.cc/"
 )
 
 var (
